@@ -1,0 +1,54 @@
+<html>
+<head>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+<!-- For inserting that nice syntax highlighting thing --> 
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+<!-- The script that is actually producing some circles --> 
+<script> 
+window.onload = function() {
+    var svg = d3.select("vis")
+                    .append("svg")
+                    .attr("width", "720")
+                    .attr("height", "120"); 
+
+     
+    var circle = svg.selectAll("circle")
+        .data([20,40,70,90], function(d) { return d; });
+     
+    circle.enter().append("circle")
+        .attr("r", function(d){return d/2;})
+        .attr("cy", 60) 
+        .attr("cx", function(d,i){return i * 100 + 30;});
+     
+    circle.exit().remove();
+}
+</script> 
+
+</head>
+<body>
+<vis> 
+</vis> 
+<pre><code>
+    var svg = d3.select("body")
+                    .append("svg")
+                    .attr("width", "720")
+                    .attr("height", "120"); 
+
+    var circle = svg.selectAll("circle")
+        .data([20,40,70,90], function(d) { return d; });
+     
+    circle.enter().append("circle")
+        .attr("r", function(d){return d/2;})
+        .attr("cy", 60) 
+        .attr("cx", function(d,i){return i * 100 + 30;});
+     
+    circle.exit().remove();
+</code></pre> 
+
+</body>
+</html>

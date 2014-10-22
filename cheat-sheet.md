@@ -12,7 +12,26 @@ Then let's create a circle.
 div.innerHTML = '<svg width="100" height="100"> <circle cx="30" cy="60" r="10"></circle></svg>' 
 ```
 
+
 # 2
+
+Using d3 to do the same thing as we did. With d3 we can handle groups of related
+elements called *selections*. 
+```javascript
+var body = d3.select("body");
+var div = body.append("div");
+div.html("Hello, world!");
+```
+
+Another nice thing about selections is *method chaining*
+```javascript
+var body = d3.select("body").append("div").html("Hello, mate!");
+```
+
+Now, let's make some visual stuff! 
+
+# 3
+
 
 Select them all
 ```javascript
@@ -73,9 +92,9 @@ var circle = svg.selectAll("circle").data([20,40]);
 circle.exit().remove() 
 ```
 
-# 3 
+# 4 
 
-Putting it all togheter
+Putting it all together
 
 ```javascript 
 
@@ -91,3 +110,48 @@ circle.enter().append("circle")
 
 circle.exit().remove();
 ```
+
+# 5 Lets make a scatterplot! 
+
+First some data
+```javascript
+    var dataset = [{x:10, y:10}, 
+                    {x:20, y:80}]
+``` 
+
+Make a *svg* thing where we can plot and that 
+```javascript 
+    var svg = d3.select("body")
+                .append("svg")
+                .attr("width", "300")
+                .attr("height", "200"); 
+```
+
+Now dataset! 
+```javascript 
+    var circle = svg.selectAll("circle")
+                    .data(dataset) 
+```
+
+Surplus elements are removed since they end up in the exit selection
+```javascript
+    circle.exit().remove() 
+```
+
+New data and circles are added 
+```javascript
+    circle.enter().append("circle")   
+          .attr("r", "3");
+```
+
+Update the location of existing circles 
+```javascript
+    circle.attr("cx", function(d) {
+                return d.x
+           })
+          .attr("cy", function(d) {
+                return d.y
+          });
+```
+
+What about axes? 
