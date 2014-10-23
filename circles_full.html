@@ -18,7 +18,7 @@ window.onload = function() {
 
      
     var circle = svg.selectAll("circle")
-        .data([20,40,70,90], function(d) { return d; });
+        .data([20,40,70,90]);
      
     circle.enter().append("circle")
         .attr("r", function(d){return d/2;})
@@ -40,7 +40,7 @@ window.onload = function() {
                     .attr("height", "120"); 
 
     var circle = svg.selectAll("circle")
-        .data([20,40,70,90], function(d) { return d; });
+        .data([20,40,70,90]);
      
     circle.enter().append("circle")
         .attr("r", function(d){return d/2;})
