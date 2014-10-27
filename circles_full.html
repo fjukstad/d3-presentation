@@ -11,20 +11,28 @@
 <!-- The script that is actually producing some circles --> 
 <script> 
 window.onload = function() {
+    /* 
+       Note that we select the vis element. This is because we want the pretty
+       syntax highlighting things on the bottom.
+    */ 
     var svg = d3.select("vis")
                     .append("svg")
                     .attr("width", "720")
                     .attr("height", "120"); 
 
-     
     var circle = svg.selectAll("circle")
-        .data([20,40,70,90]);
-     
+                .data([20,40,60,80]); 
+
     circle.enter().append("circle")
-        .attr("r", function(d){return d/2;})
-        .attr("cy", 60) 
-        .attr("cx", function(d,i){return i * 100 + 30;});
-     
+
+    circle.attr("r", function(d){
+              return d/2;
+          })
+          .attr("cy", 60)
+          .attr("cx", function(d,i){
+              return i * 100 + 30;
+          });
+
     circle.exit().remove();
 }
 </script> 
@@ -40,13 +48,18 @@ window.onload = function() {
                     .attr("height", "120"); 
 
     var circle = svg.selectAll("circle")
-        .data([20,40,70,90]);
-     
+                .data([20,40,60,80]); 
+
     circle.enter().append("circle")
-        .attr("r", function(d){return d/2;})
-        .attr("cy", 60) 
-        .attr("cx", function(d,i){return i * 100 + 30;});
-     
+
+    circle.attr("r", function(d){
+              return d/2;
+          })
+          .attr("cy", 60)
+          .attr("cx", function(d,i){
+              return i * 100 + 30;
+          });
+
     circle.exit().remove();
 </code></pre> 
 
