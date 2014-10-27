@@ -43,7 +43,8 @@ window.onload = function() {
             .nodes(graph.Nodes)
             .links(graph.Edges) 
             .start(); 
-
+    
+    // Join the edges with the visual edges
     var edge = svg.selectAll(".link")
         .data(graph.Edges, function(d) {
                 console.log(d) 
@@ -53,7 +54,8 @@ window.onload = function() {
       var edgeEnter = edge.enter().append("line")
           .attr("class", "link")
           .style("stroke-width", 2)
-          .style("stroke", "#cc99cc")
+          .style("stroke", "#999")
+          .style("stroke-opacity", ".6")
 
           
         var node = svg.selectAll(".node")
