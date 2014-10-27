@@ -8,46 +8,60 @@
 <script>hljs.initHighlightingOnLoad();</script>
 
 
+<!-- The script that is actually producing some circles --> 
+<script> 
+window.onload = function() {
+    /* 
+       Note that we select the vis element. This is because we want the pretty
+       syntax highlighting things on the bottom.
+    */ 
+    var svg = d3.select("vis")
+                    .append("svg")
+                    .attr("width", "720")
+                    .attr("height", "120"); 
 
-<script>
+    var dataset = [{x:10, y:10},
+                    {x:20, y:80}];
 
-window.onload = function() { 
-/*
-
-    var svg = d3.select("body")
-                .append("svg")
-                .attr("width", "300")
-                .attr("height", "200"); 
-
-    var dataset = [{x:10, y:10}, 
-                    {x:20, y:80}]
-
-    // data join with circles
     var circle = svg.selectAll("circle")
-                    .data(dataset) 
-
-    // remove left over, if any 
-    circle.exit().remove() 
+                    .data(dataset)
                     
-    // if need to make new circles, do so 
-    circle.enter().append("circle")   
-          .attr("r", "3"); 
-
-    //Update existing circles 
-    circle.attr("cx", function(d) {
+    circle.enter().append("circle")
+          .attr("r", "4")
+          .attr("cx", function(d) {
                 return d.x
            })
           .attr("cy", function(d) {
                 return d.y
           });
-        
-
-
-*/  
-} 
-
+}
 </script> 
-</head> 
+
+</head>
 <body>
+<vis> 
+</vis> 
+<pre><code>
+var dataset = [{x:10, y:10},
+                {x:20, y:80}];
+
+var svg = d3.select("body")
+            .append("svg")
+            .attr("width", "300")
+            .attr("height", "200");
+
+var circle = svg.selectAll("circle")
+                .data(dataset)
+                
+circle.enter().append("circle")
+      .attr("r", "4")
+      .attr("cx", function(d) {
+            return d.x
+       })
+      .attr("cy", function(d) {
+            return d.y
+      });
+</code></pre> 
+
 </body>
-</html> 
+</html>

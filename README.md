@@ -289,7 +289,7 @@ var svg = d3.select("svg")
 var circle = svg.selectAll("circle")
             .data([20,40,60,80]); 
 
-circle.enter().append("circle")
+circle.enter().append("circle");
 
 circle.attr("r", function(d){
           return d/2;
@@ -305,7 +305,7 @@ circle.exit().remove();
 # Lets make a scatterplot!
 ```javascript
 var dataset = [{x:10, y:10},
-                {x:20, y:80}]
+                {x:20, y:80}];
 
 var svg = d3.select("body")
             .append("svg")
@@ -316,7 +316,7 @@ var circle = svg.selectAll("circle")
                 .data(dataset)
                 
 circle.enter().append("circle")
-      .attr("r", "3")
+      .attr("r", "4")
       .attr("cx", function(d) {
             return d.x
        })
