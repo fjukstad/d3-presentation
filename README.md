@@ -137,91 +137,142 @@ contains a group of 4 divs, and `div.enter()` and `div.exit()` are both empty.
 
 
 
-# .selectAll - Wat
+# .selectAll - [Wat](https://www.destroyallsoftware.com/talks/wat)
 
-So what if we have a completely empty HTML page, but have some data to show? We
-create an array of some arbitrary numbers and want to create a paragraph for
-each of them.
+Ok, so so far we have modified the DOM that was set up for us. What if we have a
+completely empty HTML page and want to write some numbers to it? Lets create
+some numbers and write them out in separate paragraphs: 
 
 ```js
 var dataset = [4, 8, 15, 16, 23, 42];
 var p = d3.select("body").selectAll("p")
     .data(dataset)
+
 ```
 
-If we now have a look at `p`, `p.enter()` and  `p.exit()` we'll notice that only
+But wait, if the web page was empty, why do we use selectAll if we know the
+paragraphs don't exist? With D3, you don't tell it how you do something, but
+what you want it to do. We want the numbers in the dataset to correspond to
+paragraphs. 
+
+If we now have a look at `p.enter()`,  `p` and  `p.exit()` we'll notice that only
 `p.enter()` has got any items. This is because there are no matching elements
 for any of the datum.
 
 To make elements, we simply get the enter selection and create a `<p>` for each
 of them!
+
 ```js
-p.enter().append("p")
-        .text(function(d){
-            return "Hi, I'm number " + d;
-        });
+    p.enter().append("p")
+    .text(function(d){
+        return "Hi, I'm number " + d;
+    });
 ```
 
 
 
 # Circles
 
-Select them all
+Let's try to manipulate some circles using selections. On the page we've got
+three pretty [svg](http://www.w3.org/TR/SVG/) circles. Have a look at the
+source, to see how that looks in HTML. 
+
+Using `selectAll` we can get all of the circles. 
 ```javascript
 var circle = d3.selectAll("circle");
 ```
 
-New color and different radius
-
+With this selection, we can go ahead and change their color and radius.
 ```javascript
 circle.style("fill", "steelblue");
 circle.attr("r", 30);
 ```
 
-Dancing circles.
+Using anonymous functions we can set values on a per-element basis. This
+function is evaluated for every element. 
+Notice that every one of them have a `cx` attribute, this is the x coordinate of
+the centers of the circles. Using an anonymous function we can set the circle's
+x-coordinate. 
 
 ```javascript
-circle.attr("cx", function() { return Math.random() * 720; });
+circle.attr("cx", function() { 
+    return Math.random() * 720;
+});
 ```
 
-We need data! Refresh 2.html.
+Ok, but now, lets try to join some data to these circles. Refresh the page so
+that the circles are back where they started. 
+
+Like we did previously we join a dataset with the circles. 
 
 ```javascript
-var circle = d3.selectAll("circle");
-circle.data([20, 40, 70])
+var circle = d3.selectAll("circle")
+    circle.data([20, 40, 60])
 ```
 
-Change their radius according to the data we entered.
+With the dataset joined, we can set their radius according to bound data.
+Usually we use the name `d` but use whatever you want.  
+
 ```javascript
-circle.attr("r", function(d){return d;});
+circle.attr("r", function(d){
+    return d;
+});
 ```
 
-Move them a bit from each other, note we're using the index.
+Now we got them all tangled up, let's space them a bit out. Using a second
+argument to the function we can get its index in the selection. 
+
 ```javascript
-circle.attr("cx", function(d,i){return i * 100 + 30;})
+circle.attr("cx", function(d,i){
+    return i * 100 + 30;
+})
 ```
 
-What if we had more than 3 data elements? We need a new circle!
+But what if we had more than 3 data elements? We would need a new circle! 
 
+Let's join the circles with some other data, now 4 numbers. 
 ```javascript
-var svg = d3.select("svg");
+var circle = d3.select("svg")
+                .selectAll("circle")
+                .data([20, 40, 60, 80]);
 
-var circle = svg.selectAll("circle").data([20, 40, 70, 90]);
+```
 
+Have a look at what the circle variable looks like. D3 has joined our data with 
+the circles on the page. Three of the data items are joined with a circle on the
+web page, but the last number (80) hasn't got a circle yet. Remember that every
+data item that is missing an element is placed in the enter selection. 
+
+So for every item that is not bound to an element, we append a `<circle>` to the
+svg: 
+```js
 var circleEnter = circle.enter().append("circle");
 
 ```
 
-Update the attributes, so that the new one will have them as well
+Have a look at the DOM tree to see that we've got a new circle. 
+
+With these four circles we can update their attributes, e.g. radius and
+location: 
+
 ```javascript
-circle.attr("r", function(d){return d/2;});
-circle.attr("cy", 60)
-circle.attr("cx", function(d,i){return i * 100 + 30;});
+circle.attr("r", function(d){
+    return d/2;
+});
+
+circle.attr("cy", 60);
+
+circle.attr("cx", function(d,i){
+    return i * 100 + 30;
+});
 ```
 
-Now removing the last two items.
+If we updated our dataset to only contain the first two items, we would need to
+remove the circles without any data. Remember that the elements that do not
+correspond to data are placed in the exit selection. 
+
 ```javascript
-var circle = svg.selectAll("circle").data([20,40]);
+var circle = d3.select("svg").selectAll("circle").data([20,40]);
 circle.exit().remove()
 ```
 
@@ -234,7 +285,7 @@ Putting it all together
 var svg = d3.select("svg")
 
 var circle = svg.selectAll("circle")
-    .data([20,40,70,90], function(d) { return d; });
+    .data([20,40,60,80], function(d) { return d; });
 
 circle.enter().append("circle")
     .attr("r", function(d){return d/2;})
@@ -287,8 +338,8 @@ Update the location of existing circles
           });
 ```
 
-What about axes?
 
+# Graphman
 
 # Helpful resources
 [Let's make a bar
