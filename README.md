@@ -272,11 +272,12 @@ remove the circles without any data. Remember that the elements that do not
 correspond to data are placed in the exit selection. 
 
 ```javascript
-var circle = d3.select("svg").selectAll("circle").data([20,40]);
+var circle = d3.select("svg").selectAll("circle")
+                             .data([20,40]);
 circle.exit().remove()
 ```
 
-# Circles complete
+# Putting all of that together
 
 Putting it all together
 
@@ -284,58 +285,44 @@ Putting it all together
 
 var svg = d3.select("svg")
 
+
 var circle = svg.selectAll("circle")
-    .data([20,40,60,80], function(d) { return d; });
+            .data([20,40,60,80]); 
 
 circle.enter().append("circle")
-    .attr("r", function(d){return d/2;})
-    .attr("cy", 60)
-    .attr("cx", function(d,i){return i * 100 + 30;});
+
+circle.attr("r", function(d){
+          return d/2;
+      })
+      .attr("cy", 60)
+      .attr("cx", function(d,i){
+          return i * 100 + 30;
+      });
 
 circle.exit().remove();
 ```
 
 # Lets make a scatterplot!
-
-First some data
 ```javascript
-    var dataset = [{x:10, y:10},
-                    {x:20, y:80}]
-```
+var dataset = [{x:10, y:10},
+                {x:20, y:80}]
 
-Make a *svg* thing where we can plot and that
-```javascript
-    var svg = d3.select("body")
-                .append("svg")
-                .attr("width", "300")
-                .attr("height", "200");
-```
+var svg = d3.select("body")
+            .append("svg")
+            .attr("width", "300")
+            .attr("height", "200");
 
-Now dataset!
-```javascript
-    var circle = svg.selectAll("circle")
-                    .data(dataset)
-```
-
-Surplus elements are removed since they end up in the exit selection
-```javascript
-    circle.exit().remove()
-```
-
-New data and circles are added
-```javascript
-    circle.enter().append("circle")
-          .attr("r", "3");
-```
-
-Update the location of existing circles
-```javascript
-    circle.attr("cx", function(d) {
-                return d.x
-           })
-          .attr("cy", function(d) {
-                return d.y
-          });
+var circle = svg.selectAll("circle")
+                .data(dataset)
+                
+circle.enter().append("circle")
+      .attr("r", "3")
+      .attr("cx", function(d) {
+            return d.x
+       })
+      .attr("cy", function(d) {
+            return d.y
+      });
 ```
 
 
