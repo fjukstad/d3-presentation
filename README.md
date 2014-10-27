@@ -1,7 +1,7 @@
-This is a small guide/presentation about [d3](d3js.org) that I did for the [IT.
-Department's Developer lunch](utviklerlunsj.uit.no) 29. October 2014. To follow
-the guide, clone down the repo and start a simple HTTP server in that directory,
-e.g.
+This is a small guide/presentation about [d3](http://d3js.org) that I did for
+the [IT.  Department's Developer lunch](http://utviklerlunsj.uit.no) 29. October
+2014. To follow the guide, clone down the repo and start a simple HTTP server in
+that directory, e.g.
 
 ```bash
 git clone git@github.com:fjukstad/d3-presentation.git
