@@ -325,6 +325,118 @@ circle.enter().append("circle")
       });
 ```
 
+# Moving on to a bar chart! 
+
+With D3 there are endless posibilities when it comes to visualizing your data.
+Let's try to make a bar chart. 
+
+First let's set up a dataset
+
+```js
+var dataset = [2,3,7,11,13,17]
+```
+
+We want the bars to have a static width, and the `<svg>` element should be 400
+pixels high. 
+
+```js
+var h = 400,
+    barWidth = 30;
+```
+
+We want to use the dataset to figure out the height of every bar. Since we're
+dealing with small numbers, we'll make use of `d3.scale` to scale them up to the
+size of the svg we are drawing with. D3 can help us map numbers in one domain,
+i.e. our dataset, to a new domain, i.e. pixels from 0 to the height of the svg.
+
+
+```js
+var yScale = d3.scale.linear() 
+                .domain([0, d3.max(dataset)])
+                .range([0,h]);
+```
+
+This scale takes values `[0,...,17]` and maps them to values `[0,...,h=400]`. 
+
+Then we set up the svg like we're used to. 
+
+```js
+var svg = d3.select("body")
+                .append("svg")
+                .attr("width", barWidth * dataset.length)
+                .attr("height", h); 
+```
+
+Note that we set the width to be the number of items in the dataset multipled
+with the width of the bars. The bars will fit the `svg` perfectly. 
+
+Next up is adding some bars. In our example we want to draw bars and write out
+the data element within the bar. With `svg` we have got many different elements
+we can chose from when we want to draw something. So far we've only had a look
+at `<circle>`, but [there are many
+more!](https://developer.mozilla.org/en-US/docs/Web/SVG/Element). Since we want
+both text and a shape, we choose the `<g>` element. This element is used to
+group objects, making it simple to place text and a shape in the same place.
+
+Let's join the dataset with some `<g>` elements
+
+```js 
+var bar = svg.selectAll("g")
+    .data(dataset)
+    .enter().append("g")
+    .attr("transform", function(d,i){
+        var yoffset = h-yScale(d)
+        return "translate(" + i * barWidth + ","+ yoffset +")";
+    })
+```
+
+The first three lines should be familiar now. For any data that doesn't have a
+corresponding `g` element, create a new one. Then we add the transform attribute
+to move this `g` element to a new `x`, `y` location. This is because we want to
+start drawing the bars in different locations. The `x` coordinate will make sure
+that we place them one after another on the x-xis, and the `y` coordinate makes
+sure that the bars are drawn to look like they are growing upwards. 
+Remember that the coordinate `(0,0)` is top left. 
+
+Next up is creating the shape that draws a rectangle. For this we have 
+the svg element `<rect>`. We use the `bar` selection (with the `g` elements we
+created), and append a rectangle: 
+
+
+```js
+bar.append("rect") 
+    .attr("height", function(d){
+            return yScale(d);
+            })
+    .attr("width", barWidth - 1)
+    .style("fill", "#fab") 
+```
+
+
+The height is calculated from the data, width is the predefined width minus a
+pixel, and the fill color is a pretty shade of pink. 
+
+The last thing we need to get in there are labels for each bar. We use the same
+`bar` selection and append a text element: 
+
+```js
+bar.append("text")
+    .attr("x", barWidth/2)
+    .attr("y", 10) 
+    .attr("dy", ".35em")
+    .text(function(d){
+            return d;
+    })
+    .attr("fill", "#5F5F5F") 
+    .style("text-anchor", "middle")
+```
+
+The `x` attribute is in the middle of the rectagle, the `y` attribute is set to
+10 (just a number that locates the label towards the top of the rectangle). Note
+that this coordinate is relative to the position of the `g` element. All of the
+attributes that were set for the `g` element is inherited by its children. In
+our case it's just the transform. The last 5 lines writes the text in a dark
+grey color, and makes sure that its centered within the `g`. 
 
 # Graphman
 
