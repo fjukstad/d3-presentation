@@ -1,8 +1,16 @@
-This guide/presentation/demo contains material from [Let's make a bar
-chart](http://bost.ocks.org/mike/bar/),
-[Three little circles](http://bost.ocks.org/mike/circles/),
-[Thinking with joins](http://bost.ocks.org/mike/join/) and
-[How selections work](http://bost.ocks.org/mike/selection/).
+This is a small guide/presentation about [d3](d3js.org) that I did for the [IT.
+Department's Developer lunch](utviklerlunsj.uit.no) 29. October 2014. To follow
+the guide, clone down the repo and start a simple HTTP server in that directory,
+e.g.
+
+```bash
+git clone git@github.com:fjukstad/d3-presentation.git
+cd d3-presentation
+python -m SimpleHTTPServer
+```
+
+Then head over there and navigate through this guide. The different pages are
+named somewhat similar to the headers in the readme. 
 
 # What is d3 and why you should care
 D3 is a JavaScript library for manipulating documents based on data. With it you
@@ -280,3 +288,12 @@ Update the location of existing circles
 ```
 
 What about axes?
+
+
+# Helpful resources
+[Let's make a bar
+chart](http://bost.ocks.org/mike/bar/),
+[Three little circles](http://bost.ocks.org/mike/circles/),
+[Thinking with joins](http://bost.ocks.org/mike/join/) and
+[How selections work](http://bost.ocks.org/mike/selection/).
+
