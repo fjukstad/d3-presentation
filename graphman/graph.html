@@ -4,6 +4,54 @@
 <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 
 <script type="text/javascript">
+
+function inEdges(edges, e){
+
+    id =  e.source + "-" + e.target;
+    for(var j = 0; j < edges.length; j++){
+        f = edges[j];
+        f_id = f.source.index + "-" + f.target.index; 
+        
+        // We've already got the edge
+        if(f_id === id){
+            return true 
+        }
+    }
+    return false
+}
+function updateEdges(graph, edges){
+    for(var i = 0; i < edges.length; i++){
+        e = edges[i]
+        if(!inEdges(graph.Edges, e)){
+            graph.Edges.push(e);
+        }
+    }
+    
+    return graph
+}
+
+function inNodes(nodes, n){
+    for(var j = 0; j < nodes.length; j++){
+        m = nodes[j];
+        if(m.id  === n.id){
+            return true
+        } 
+    }
+    return false 
+}
+
+function updateNodes(graph, nodes){
+    for(var i = 0; i < nodes.length; i++){
+        n = nodes[i]
+        if(!inNodes(graph.Nodes,n)){
+            graph.Nodes.push(n) 
+        }
+    }
+    return graph
+}
+
+
+
 window.onload = function() {
     
     var width = 500,
@@ -26,52 +74,57 @@ window.onload = function() {
         ws.send("");
     };
 
-    var graph, edge, node; 
+    var graph, edge, edgeEnter, node; 
+
+    var g = {Nodes:[], Edges:[]}; 
 
     ws.onmessage = function(msg) {
         graph = $.parseJSON(msg.data)
-        console.log(graph.Nodes) 
-        console.log(graph.Edges) 
         
+        console.log("What is this?")
+
+        g = updateNodes(g, graph.Nodes) 
+        g = updateEdges(g, graph.Edges) 
+
+        console.log(g) 
+
         // if we don't get any edges (null), then make the edge array empty
         if(!graph.Edges){
             graph.Edges = []
         } 
-        
+
+
         // Set up force direction using the nodes and edges we received
         force
-            .nodes(graph.Nodes)
-            .links(graph.Edges) 
+            .nodes(g.Nodes)
+            .links(g.Edges) 
             .start(); 
-    
-    // Join the edges with the visual edges
-    var edge = svg.selectAll(".link")
-        .data(graph.Edges, function(d) {
-                console.log(d) 
-             return d.source.id + "-" + d.target.id;
-             });
 
-      var edgeEnter = edge.enter().append("line")
-          .attr("class", "link")
-          .style("stroke-width", 2)
-          .style("stroke", "#999")
-          .style("stroke-opacity", ".6")
+        // Join the edges with the visual edges
+        edge = svg.selectAll(".link")
+                  .data(g.Edges, function(d) {
+                      return d.source.id + "-" + d.target.id;
+                  });
 
-          
-        var node = svg.selectAll(".node")
-            .data(graph.Nodes, function(d){
-                        return d.id;
-                        });
+        edgeEnter = edge.enter().append("line")
+                        .attr("class", "link")
+                        .style("stroke-width", 2)
+                        .style("stroke", "#999")
+                        .style("stroke-opacity", ".6")
+        
+        node = svg.selectAll(".node")
+                  .data(g.Nodes, function(d){
+                      return d.id;
+                   });
 
-        var nodeEnter = node.enter()
-            .append("circle")
-            .attr("class", "node")
-            .attr("r", 4) 
-            .attr("cy", function(d) { return d.y; })
-            .style("fill", function(d){
-                  return color(d.id);
-                  }) 
-            .call(force.drag) 
+        nodeEnter = node.enter().append("circle")
+                                .attr("class", "node")
+                                .attr("r", 4) 
+                                .attr("cy", function(d) { return d.y; })
+                                .style("fill", function(d){
+                                      return color(d.id);
+                                      }) 
+                                .call(force.drag) 
             
         force.on("tick", function() {
             edge.attr("x1", function(d) { return d.source.x; })
@@ -82,12 +135,6 @@ window.onload = function() {
             node.attr("cx", function(d) { return d.x; })
                 .attr("cy", function(d) { return d.y; });
               });
-
-
-        force
-            .start(); 
-
-
     };
 };
 </script>

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
-	"sync"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -56,7 +55,6 @@ func websocketHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 var g *Graph
-var mutex *sync.Mutex
 
 func (g Graph) hasNode(a Node) bool {
 	for _, n := range g.Nodes {
