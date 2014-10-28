@@ -624,10 +624,10 @@ Then you can visit the graph visualization on
 
 That's it for this presentation, good job for following it to the end! 
 
-# Helpful resources This tutorial uses material from: [Let's make a bar
-chart](http://bost.ocks.org/mike/bar/), [Three little
-circles](http://bost.ocks.org/mike/circles/), [Thinking with
-joins](http://bost.ocks.org/mike/join/), [How selections
-work](http://bost.ocks.org/mike/selection/) and [Lars Tiede's
-Utviklerlunsj](https://source.uit.no/lars.tiede/utviklerlunsj-20140917/tree/master).
+# Helpful resources This tutorial uses material from:
+[Let's make a bar chart](http://bost.ocks.org/mike/bar/),
+[Three little circles](http://bost.ocks.org/mike/circles/),
+[Thinking with joins](http://bost.ocks.org/mike/join/), 
+[How selections work](http://bost.ocks.org/mike/selection/) and
+[Lars Tiede's Utviklerlunsj](https://source.uit.no/lars.tiede/utviklerlunsj-20140917/tree/master).
 
