@@ -440,10 +440,194 @@ grey color, and makes sure that its centered within the `g`.
 
 # Graphman
 
-# Helpful resources
-[Let's make a bar
-chart](http://bost.ocks.org/mike/bar/),
-[Three little circles](http://bost.ocks.org/mike/circles/),
-[Thinking with joins](http://bost.ocks.org/mike/join/) and
-[How selections work](http://bost.ocks.org/mike/selection/).
+The last thing we're going to look at is how we can use D3 together with
+websockets to create a graph visualization that is updated from a server.
+Unfortunately I don't think we'll have time to look at absolutely everything
+today, so this will be a brief walkthrough of how it's done. 
+
+The idea of the whole thing is that we have some sort of server that keeps track
+of a graph (nodes and edges etc.). When the graph is updated it sends an updated
+list of nodes and edges to the client which can visualize the graph. The client
+visualizes the graph using D3 to represent nodes as circles and edges as lines.
+To make everything look pretty etc. ,we use `d3.force` to generate a
+force-directed layout. 
+
+## Server
+The server is a small little thing written in go, looking very similar to [Lars
+Tiede's websocket thing](https://source.uit.no/lars.tiede/utviklerlunsj-20140917)
+some weeks back. The only difference is that the server sends a graph
+rather than a number to the client. The graph is a just a struct that looks
+something like this when it's sent to the client: 
+
+```
+Graph {
+    Nodes: [
+        {id: 1},
+        {id: 3}
+        ...
+        ],
+    Edges: [
+        {source: 0, target:1},
+        ...
+    ]
+}
+```
+Note that the `source` and `target` are indicies in the `Nodes` array. This is
+to make everything a bit more simple when we're working with `d3.force`. The
+naming is also to make things simpler.
+
+## Client 
+We use D3 to join the data representation of a graph to a visual representation
+using `<circle>` and `<line>` svg elements. We can have a brief look at how the
+source code looks like: 
+
+```
+    var width = 500,
+        height = 500;
+
+    var svg = d3.select("body").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    var color = d3.scale.category20b();
+
+    var force = d3.layout.force()
+        .charge(-50)
+        .linkDistance(30)
+        .size([width, height]);
+```
+
+We create a new `<svg>` element with the given dimension. The `color` variable
+is a color scale that we'll use to color our nodes. It's categorical color scale
+with 20 different colors. For more info see [Categorical
+Colors](https://github.com/mbostock/d3/wiki/Ordinal-Scales#categorical-colors).
+Next up is the `force` variable, where we have set up our force directed layout.
+The `charge` and the `linkDistance` don't matter that much, see
+[`d3.force`](https://github.com/mbostock/d3/wiki/Force-Layout) for more
+information. 
+
+Next is opening a websocket to the server. We use the same approach as Lars did: 
+
+```js
+    var ws = new WebSocket("ws://localhost:4040/graph");
+
+    ws.onopen = function() {
+        ws.send("");
+    };
+
+    ws.onmessage = function(msg) {
+        ...
+    } 
+```
+
+Open a new websocket to the given URL and send an empty message to signal that
+we're up and runnig. When the client receives a message we should update the
+graph visualization according to the list of nodes and edges from the server. 
+
+Let's have a look at what happens within the `ws.onmessage` function: 
+
+```js
+        updatedGraph = $.parseJSON(msg.data)
+
+        graph = updateNodes(graph, updatedGraph.Nodes) 
+        graph = updateEdges(graph, updatedGraph.Edges) 
+```
+
+We parse the JSON that we got from the server, so that we get a javascript
+object that we can work with. Usually we would just create `<circle>` elements
+based on the array of nodes that we received from the server. However, since we
+don't want to restart the force-directed layout every time we receive an updated
+list of nodes and edges,  we need keep a local representation of the graph. This
+representation will contain the `x` and `y` locations for the `<circle>` and
+`<link>` elements as they are moved around. 
+
+We have some small helper functions `updateNodes(graph, nodes)` and
+`updateEdges(graph, edges)` that can help us keep track of nodes and edges,
+adding new ones as they are received. Both of these return a graph object that
+we can 
+
+Let's start up the force-directed layout with the list of nodes and edges
+
+```js
+        force
+            .nodes(graph.Nodes)
+            .links(graph.Edges) 
+            .start(); 
+```
+
+This will start to move nodes and edges around according to the force-directed
+layout we created. We're not drawing anything yet, so let's do that. 
+We can start to join the nodes with `<circle>` elements.
+
+```js
+        node = svg.selectAll(".node")
+                  .data(graph.Nodes); 
+
+        nodeEnter = node.enter().append("circle")
+                                .attr("class", "node")
+                                .attr("r", 4) 
+                                .style("fill", function(d){
+                                      return color(d.id);
+                                      }) 
+                                .call(force.drag) 
+```
+
+Everything here should be familiar. Note that we use the color scale we set
+up earlier to color the node according to its `id`. The last line makes it
+possible to drag nodes around. For more information about how `.call` works, see
+[Selections](https://github.com/mbostock/d3/wiki/Selections#call). 
+
+Next up is adding edges to the graph. 
+
+```
+        edge = svg.selectAll(".link")
+                  .data(graph.Edges, function(d) {
+                      return d.source.id + "-" + d.target.id;
+                  });
+
+        edgeEnter = edge.enter().append("line")
+                        .attr("class", "link")
+                        .style("stroke-width", 2)
+                        .style("stroke", "#999")
+                        .style("stroke-opacity", ".6")
+```
+
+Everything here is pretty straight forward. The only thing here that's new is
+that we specify the key which D3 uses to map the data with the `<line>` element. 
+
+You might wonder where we've put these circles and links, but so far we have
+only created them not specified where to draw them. That's where the `d3.force`
+is going to help out. When we started the force-directed layout above it is
+modifying the arrays with our nodes and edges, modifying different attributes
+such as `x` and `y`, or `source.x` and `target.x` in the case of edges. To draw
+our elements in according to this values we can use  `force.on("tick",
+function)`which is called on every step in the force simulation: 
+
+```js
+        force.on("tick", function() {
+            edge.attr("x1", function(d) { return d.source.x; })
+                .attr("y1", function(d) { return d.source.y; })
+                .attr("x2", function(d) { return d.target.x; })
+                .attr("y2", function(d) { return d.target.y; });
+
+            node.attr("cx", function(d) { return d.x; })
+                .attr("cy", function(d) { return d.y; });
+        });
+```
+
+Now we draw the nodes and edges where they're supposed to be! 
+
+If you want to see how everything is magically put together, head to the
+[graphman](/graphman) directory. To run the server, run `go run graphman.go`.
+Then you can visit the graph visualization on
+[localhost:4040](http://localhost:4040).
+
+That's it for this presentation, good job for following it to the end! 
+
+# Helpful resources This tutorial uses material from: [Let's make a bar
+chart](http://bost.ocks.org/mike/bar/), [Three little
+circles](http://bost.ocks.org/mike/circles/), [Thinking with
+joins](http://bost.ocks.org/mike/join/), [How selections
+work](http://bost.ocks.org/mike/selection/) and [Lars Tiede's
+Utviklerlunsj](https://source.uit.no/lars.tiede/utviklerlunsj-20140917/tree/master).
 
