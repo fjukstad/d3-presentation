@@ -47,6 +47,13 @@ Cool right? Next up: D3.
 
 
 # D3
+To get started with D3, just add
+```html
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+```
+
+to the header of the HTML file. 
+
 Using d3 to do the same thing as we did.
 
 ```javascript
