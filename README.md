@@ -100,19 +100,19 @@ d3.selectAll("div").style("color","blue");
 
 Now, we'll go some more into the details of how selections work.
 
-# Selections
-Before we continue I think we should have a look at how selections work. As you
-can see the web page contains a body with 4 div's. D3 is really about mapping
-data to something in the DOM, divs, svgs, anything. Selections are
-really just groups of arrays of things. Lets try to create
-some data that we can map to these divs:
+# Data Joins & Selections
+Before we continue I think we should have a look at how data joins and
+selections work. As you can see the web page contains a body with 4 div's. D3 is
+really about mapping data to something in the DOM, divs, svgs, anything.
+Selections are really just groups of arrays of things. Lets try to create some
+data that we can join with these divs:
 
 In the console type
 ```js
 var div = d3.selectAll("div");
 ```
 to get a selection containing all of the 4 divs on our page. Check it by
-inspecting the object it returned. Now, if we want to map some data to these
+inspecting the object it returned. Now, if we want to join some data to these
 elements, we need a dataset
 
 ```js
@@ -142,7 +142,13 @@ These are returned by `div`, `div.enter()` and `div.exit()`
 respectively. Have a look at them in the console. You should find that `div`
 contains a group of 4 divs, and `div.enter()` and `div.exit()` are both empty.
 
+If you try to remove the last item from the dataset and join it again, you'll
+notice change in the `div` `div.exit()` selections. 
 
+```js
+dataset = [4,5,8]
+div = d3.selectAll("div").data(dataset);
+```
 
 # .selectAll - [Wat](https://www.destroyallsoftware.com/talks/wat)
 
@@ -351,20 +357,6 @@ var h = 400,
     barWidth = 30;
 ```
 
-We want to use the dataset to figure out the height of every bar. Since we're
-dealing with small numbers, we'll make use of `d3.scale` to scale them up to the
-size of the svg we are drawing with. D3 can help us map numbers in one domain,
-i.e. our dataset, to a new domain, i.e. pixels from 0 to the height of the svg.
-
-
-```js
-var yScale = d3.scale.linear() 
-                .domain([0, d3.max(dataset)])
-                .range([0,h]);
-```
-
-This scale takes values `[0,...,17]` and maps them to values `[0,...,h=400]`. 
-
 Then we set up the svg like we're used to. 
 
 ```js
@@ -375,7 +367,21 @@ var svg = d3.select("body")
 ```
 
 Note that we set the width to be the number of items in the dataset multipled
-with the width of the bars. The bars will fit the `svg` perfectly. 
+with the width of the bars. The bars will fit the `svg` perfectly.
+
+We want to have the heights of the bars to fit the svg we have set up. 
+Since we're dealing with small numbers in our dataset, we'll make use of
+`d3.scale` to scale them up to the size of the svg we are drawing with. D3 can
+help us map numbers in one domain, i.e. our dataset, to a new domain, i.e.
+pixels from 0 to the height of the svg.
+
+```js
+var yScale = d3.scale.linear() 
+                .domain([0, d3.max(dataset)])
+                .range([0,h]);
+```
+
+This scale takes values `[0,...,17]` and maps them to values `[0,...,h=400]`. 
 
 Next up is adding some bars. In our example we want to draw bars and write out
 the data element within the bar. With `svg` we have got many different elements

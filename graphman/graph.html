@@ -78,19 +78,15 @@ window.onload = function() {
     ws.onmessage = function(msg) {
         updatedGraph = $.parseJSON(msg.data)
 
-            console.log(updatedGraph) 
-        
         graph = updateNodes(graph, updatedGraph.Nodes) 
         graph = updateEdges(graph, updatedGraph.Edges) 
 
 
-        // Set up force direction using the nodes and edges we received
         force
             .nodes(graph.Nodes)
             .links(graph.Edges) 
             .start(); 
 
-        // Join the edges with the visual edges
         edge = svg.selectAll(".link")
                   .data(graph.Edges, function(d) {
                       return d.source.id + "-" + d.target.id;
@@ -122,7 +118,7 @@ window.onload = function() {
 
             node.attr("cx", function(d) { return d.x; })
                 .attr("cy", function(d) { return d.y; });
-              });
+        });
     };
 };
 </script>
