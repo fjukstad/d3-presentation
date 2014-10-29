@@ -481,7 +481,7 @@ We use D3 to join the data representation of a graph to a visual representation
 using `<circle>` and `<line>` svg elements. We can have a brief look at how the
 source code looks like: 
 
-```
+```js
     var width = 500,
         height = 500;
 
@@ -579,7 +579,7 @@ possible to drag nodes around. For more information about how `.call` works, see
 
 Next up is adding edges to the graph. 
 
-```
+```js
         edge = svg.selectAll(".link")
                   .data(graph.Edges, function(d) {
                       return d.source.id + "-" + d.target.id;
